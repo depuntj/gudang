@@ -2,6 +2,7 @@ import csv
 from inventory.product import Product
 from inventory.warehouse import Warehouse
 from reports.sales import Sales
+from reports.inventory_report import InventoryReport
 
 def load_products(file_path):
     products_data = {}
@@ -33,11 +34,16 @@ def main():
     sales_manager = Sales()
 
     # Melakukan penjualan
-    sales_manager.sell_product(warehouse, "P1", 20) 
-    sales_manager.sell_product(warehouse, "P9", 10)  
+    sales_manager.sell_product(warehouse, "P7", 20) 
+    sales_manager.sell_product(warehouse, "P8", 10)  
     
     # Membuat laporan penjualan
     sales_manager.generate_sales_report()
+    
+    # Membuat objek InventoryReport dan menghasilkan laporan inventaris
+    inventory_report = InventoryReport()
+    inventory_report.generate_report(warehouse)
+
 
 if __name__ == "__main__":
     main()
