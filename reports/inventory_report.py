@@ -1,29 +1,38 @@
-import csv
+import pandas as pd
 
 class InventoryReport:
+    def __init__(self, inventory_file_path='data/inventory.csv'):
+        self.inventory_file_path = inventory_file_path
+
     def generate_report(self, warehouse, report_file_path='data/inventory_report.csv'):
-        inventory_data = []
+        # Memuat data inventaris dari file inventory.csv
+        try:
+            inventory_df = pd.read_csv(self.inventory_file_path, index_col='product_id')
+        except FileNotFoundError:
+            print(f"File {self.inventory_file_path} not found.")
+            inventory_df = pd.DataFrame(columns=['quantity'])
 
         for product_id, product in warehouse.products.items():
-            product_info = product.get_product_info()
-            inventory_data.append({
-                'product_id': product_info['product_id'],
-                'name': product_info['name'],
-                'price': product_info['price'],
-                'quantity': product_info['quantity']
-            })
+            initial_quantity = inventory_df.loc[product_id, 'quantity'] if product_id in inventory_df.index else 0
+            final_quantity = product.quantity
+            quantity_sold = initial_quantity - final_quantity
 
-        with open(report_file_path, 'w', newline='') as report_file:
-            fieldnames = ['product_id', 'name', 'price', 'quantity']
-            report_writer = csv.DictWriter(report_file, fieldnames=fieldnames)
-            report_writer.writeheader()
-            for item in inventory_data:
-                report_writer.writerow(item)
+            if quantity_sold > 0:
+                inventory_df.loc[product_id, 'quantity'] = final_quantity
+
+        # Menyimpan data inventaris yang telah diperbarui ke inventory.csv
+        inventory_df.to_csv(self.inventory_file_path)
+
+        # Menyimpan laporan inventaris yang telah diperbarui ke inventory_report.csv
+        inventory_df.to_csv(report_file_path, header=True, index=True)
 
         print("Inventory Report:")
         print("-----------------")
 
-        for item in inventory_data:
-            print(f"{item['name']} - ID: {item['product_id']}, Price: ${item['price']:.2f}, Quantity: {item['quantity']}")
+        for index, row in inventory_df.iterrows():
+            print(f"Product ID: {index}, Quantity: {row['quantity']}")
 
-        print(f"Inventory report has been saved to {report_file_path}")
+# Contoh penggunaan
+if __name__ == "__main__":
+    inventory_report = InventoryReport()
+    inventory_report.generate_report(warehouse)

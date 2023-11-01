@@ -1,13 +1,13 @@
-import csv
+import pandas as pd
 
 def load_inventory(file_path):
-    inventory_data = {}
-    with open(file_path, 'r') as inventory_file:
-        inventory_reader = csv.DictReader(inventory_file)
-        for row in inventory_reader:
-            product_id = row['product_id']
-            inventory_data[product_id] = int(row['quantity'])
-    return inventory_data
+    try:
+        inventory_df = pd.read_csv(file_path)
+        inventory_data = inventory_df.set_index('product_id').to_dict()['quantity']
+        return inventory_data
+    except FileNotFoundError:
+        print(f"File {file_path} not found.")
+        return {}
 
 def update_inventory(file_path, inventory_data):
     with open(file_path, 'w', newline='') as inventory_file:

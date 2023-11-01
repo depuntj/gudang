@@ -1,5 +1,4 @@
-P1,Toothpaste,20,1.99
-P9,Cereal,10,3.99
+product_id,name,quantity_sold,price
 P7,Hand Sanitizer,20,1.49
 P8,Fruit Juice,10,2.99
 P7,Hand Sanitizer,20,1.49

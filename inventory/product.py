@@ -4,7 +4,6 @@ class Product:
         self.name = name
         self.price = price
         self.quantity = quantity
-
     def __str__(self):
         return f"{self.product_id}: {self.name} - Price: ${self.price:.2f}, Quantity: {self.quantity}"
 
@@ -25,3 +24,19 @@ class Product:
             return True
         else:
             return False
+    import pandas as pd
+
+    def load_products(file_path):
+        try:
+            products_df = pd.read_csv(file_path)
+            products_data = {}
+            for index, row in products_df.iterrows():
+                product_id = row['product_id']
+                name = row['name']
+                price = row['price']
+                quantity = row['quantity']
+                products_data[product_id] = Product(product_id, name, price, quantity)
+            return products_data
+        except FileNotFoundError:
+            print(f"File {file_path} not found.")
+            return {}
