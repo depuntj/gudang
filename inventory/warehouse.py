@@ -60,3 +60,28 @@ class Warehouse:
             inventory_writer.writeheader()
             for product_id, quantity in inventory_data.items():
                 inventory_writer.writerow({'product_id': product_id, 'quantity': quantity})
+
+    def update_product_from_sales_report(self, sales_report_file_path):
+        sales_report_data = {}
+        with open(sales_report_file_path, 'r') as sales_report_file:
+            sales_report_reader = csv.DictReader(sales_report_file)
+            for row in sales_report_reader:
+                product_id = row['product_id']
+                quantity_sold = int(row['quantity_sold'])
+                if product_id in sales_report_data:
+                    sales_report_data[product_id] += quantity_sold
+                else:
+                    sales_report_data[product_id] = quantity_sold
+
+        for product_id, quantity_sold in sales_report_data.items():
+            if product_id in self.products:
+                product = self.products[product_id]
+                product.update_quantity(quantity_sold)
+
+        self.update_inventory('inventory.csv', self.get_inventory_data())
+
+    def get_inventory_data(self):
+        inventory_data = {}
+        for product_id, product in self.products.items():
+            inventory_data[product_id] = product.quantity
+        return inventory_data

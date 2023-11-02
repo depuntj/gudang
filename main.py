@@ -34,8 +34,8 @@ def main():
     sales_manager = Sales()
 
     # Melakukan penjualan
-    sales_manager.sell_product(warehouse, "P7", 20) 
-    sales_manager.sell_product(warehouse, "P8", 10)  
+    sales_manager.sell_product(warehouse, "P9", 1) 
+
     
     # Membuat laporan penjualan
     sales_manager.generate_sales_report()
@@ -43,7 +43,9 @@ def main():
     # Membuat objek InventoryReport dan menghasilkan laporan inventaris
     inventory_report = InventoryReport()
     inventory_report.generate_report(warehouse)
-
+    # melakukan update data berdasarkan laporan penjualan dalam sales_report.csv
+    warehouse.update_product_from_sales_report('data/sales_report.csv')
+    
 
 if __name__ == "__main__":
     main()
